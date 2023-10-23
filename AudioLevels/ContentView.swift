@@ -50,62 +50,6 @@ func setApplicationVolume(appName: String, volume: Float32, pid: pid_t) {
     }
 }
 
-func setSystemVolume(volume: Float32) {
-    var defaultOutputDeviceID = AudioDeviceID(0)
-    var defaultOutputDeviceIDSize = UInt32(MemoryLayout.size(ofValue: defaultOutputDeviceID))
-    
-    var getDefaultOutputDevicePropertyAddress = AudioObjectPropertyAddress(
-        mSelector: kAudioHardwarePropertyDefaultOutputDevice,
-        mScope: kAudioObjectPropertyScopeGlobal,
-        mElement: AudioObjectPropertyElement(kAudioObjectPropertyElementMain))
-
-    let status1 = AudioObjectGetPropertyData(
-        AudioObjectID(kAudioObjectSystemObject),
-        &getDefaultOutputDevicePropertyAddress,
-        0,
-        nil,
-        &defaultOutputDeviceIDSize,
-        &defaultOutputDeviceID)
-    
-    var volume = Float32(0.50)
-    var volumeSize = UInt32(MemoryLayout.size(ofValue: volume))
-
-    var volumePropertyAddress = AudioObjectPropertyAddress(
-        mSelector: kAudioHardwareServiceDeviceProperty_VirtualMainVolume,
-        mScope: kAudioDevicePropertyScopeOutput,
-        mElement: kAudioObjectPropertyElementMain)
-
-    let status2 = AudioObjectSetPropertyData(
-        defaultOutputDeviceID,
-        &volumePropertyAddress,
-        0,
-        nil,
-        volumeSize,
-        &volume)
-}
-
-func getVolume() -> Float32 {
-    var defaultOutputDeviceID = AudioDeviceID(0)
-    var volume = Float32(0.0)
-    var volumeSize = UInt32(MemoryLayout.size(ofValue: volume))
-
-    var volumePropertyAddress = AudioObjectPropertyAddress(
-        mSelector: kAudioHardwareServiceDeviceProperty_VirtualMainVolume,
-        mScope: kAudioDevicePropertyScopeOutput,
-        mElement: kAudioObjectPropertyElementMain)
-
-    let status3 = AudioObjectGetPropertyData(
-        defaultOutputDeviceID,
-        &volumePropertyAddress,
-        0,
-        nil,
-        &volumeSize,
-        &volume)
-
-    return volume
-}
-
-
 struct ContentView: View {
     @State private var currentVolume: Float32 = 0.0
     @State private var appVolumes: [AppVolume] = getApplicationsAndVolumes()
